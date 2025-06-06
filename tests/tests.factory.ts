@@ -8,20 +8,20 @@ import {
 import { faker } from '@faker-js/faker';
 import { FactoryProvider, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MinioContainer, StartedMinioContainer } from '@testcontainers/minio';
 import { S3Module } from '../source/s3.module';
 import { S3_CLIENT } from '../source/s3.tokens';
-import { MinioContainerGeneric, MinioContainerStarted } from './tests.container';
 import { TestingDocument, TestingS3Service } from './tests.types';
 
 export class TestingS3Factory {
     private _testing: TestingModule;
-    private _container: MinioContainerStarted;
+    private _container: StartedMinioContainer;
 
     private _token = faker.string.alpha({ length: 10 });
     private _bucket = faker.string.alpha({ length: 10, casing: 'lower' });
 
     public async init(): Promise<void> {
-        const tContainer = new MinioContainerGeneric();
+        const tContainer = new MinioContainer();
 
         this._container = await tContainer.withReuse().start();
 
@@ -75,7 +75,7 @@ export class TestingS3Factory {
         const tModule = Test.createTestingModule({
             imports: [
                 S3Module.forRoot({
-                    endpoint: this._container.getEndpoint(),
+                    endpoint: this._container.getConnectionUrl(),
                     region: 'us-east-1',
                     credentials: {
                         accessKeyId: this._container.getUsername(),

@@ -51,6 +51,7 @@
         "@nestjs/testing": "10.4.15",
         "@quazex/eslint-config": "1.0.2",
         "@semantic-release/git": "10.0.1",
+        "@testcontainers/minio": "10.22.0",
         "commitizen": "4.3.1",
         "cz-conventional-changelog": "3.3.0",
         "husky": "9.1.7",
