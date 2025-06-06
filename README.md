@@ -25,17 +25,17 @@ import { Module } from '@nestjs/common';
 import { S3Module } from '@quazex/nestjs-s3';
 
 @Module({
-  imports: [
-    S3Module.forRoot({
-        endpoint: 'http://localhost:9009',
-        region: 'us-east-1',
-        credentials: {
-            accessKeyId: 'accessKeyId',
-            secretAccessKey: '#########',
-        },
-        forcePathStyle: true, // for minio
-    }),
-  ],
+    imports: [
+        S3Module.forRoot({
+            endpoint: 'http://localhost:9009',
+            region: 'us-east-1',
+            credentials: {
+                accessKeyId: 'accessKeyId',
+                secretAccessKey: '#########',
+            },
+            forcePathStyle: true, // for minio
+        }),
+    ],
 })
 export class AppModule {}
 ```
@@ -64,7 +64,7 @@ export class CollectionService {
         await client.send(command);
     }
 
-    async findOne(_id: ObjectId) {
+    async findOne(id: string) {
         const command = new GetObjectCommand({
             Bucket: this.bucket,
             Key: id,
@@ -93,17 +93,17 @@ import { S3Module } from '@quazex/nestjs-s3';
 @Module({
     imports: [
         S3Module.forRootAsync({
-            useFactory: async (config: ConfigProvider) => ({
+            useFactory: async (config: SomeConfigProvider) => ({
                 endpoint: config.endpoint,
                 region: config.region,
                 credentials: {
                     accessKeyId: config.access,
                     secretAccessKey: config.secret,
                 },
-                forcePathStyle: true,
+                forcePathStyle: true, // for minio
             }),
             inject: [
-                ConfigProvider,
+                SomeConfigProvider,
             ],
         }),
     ],
@@ -119,15 +119,10 @@ By default, this module doesn't manage client connection on application shutdown
 // main.ts
 const app = await NestFactory.create(AppModule);
 
-app.useLogger(logger);
+// Starts listening for shutdown hooks
 app.enableShutdownHooks(); // <<<
 
-app.setGlobalPrefix('api');
-app.enableVersioning({
-    type: VersioningType.URI,
-});
-
-await app.listen(appConfig.port, '0.0.0.0');
+await app.listen(process.env.PORT ?? 3000);
 ```
 
 ```typescript
