@@ -10,7 +10,7 @@ import { FactoryProvider, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinioContainer, StartedMinioContainer } from '@testcontainers/minio';
 import { S3Module } from '../source/s3.module';
-import { S3_CLIENT } from '../source/s3.tokens';
+import { S3Tokens } from '../source/s3.tokens';
 import { TestingDocument, TestingS3Service } from './tests.types';
 
 export class TestingS3Factory {
@@ -22,7 +22,6 @@ export class TestingS3Factory {
 
     public async init(): Promise<void> {
         const tContainer = new MinioContainer();
-
         this._container = await tContainer.withReuse().start();
 
         const tProvider: FactoryProvider<TestingS3Service> = {
@@ -68,7 +67,7 @@ export class TestingS3Factory {
                 },
             }),
             inject: [
-                S3_CLIENT,
+                S3Tokens.getClient(),
             ],
         };
 
