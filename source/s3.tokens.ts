@@ -1,9 +1,4 @@
-export class S3Tokens {
-    public static getOptions(): string {
-        return String('s3_module_options');
-    }
-
-    public static getClient(): string {
-        return String('s3_module_client');
-    }
+export enum S3Tokens {
+  OPTIONS = 's3_module_options',
+  CLIENT = 's3_module_client',
 }
